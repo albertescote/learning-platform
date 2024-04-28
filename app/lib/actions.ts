@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { AUTH_URL } from '@/app/config';
+import axios, { AxiosError } from 'axios';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -136,5 +138,30 @@ export async function authenticate(
       }
     }
     throw error;
+  }
+}
+
+export async function getZoomAuthToken(
+  role: number,
+  meetingNumber: number,
+): Promise<string> {
+  try {
+    const requestBody = {
+      role,
+      meetingNumber,
+    };
+    const response = await axios.post(AUTH_URL, requestBody, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    });
+    console.log(response);
+    return response.data.signature;
+  } catch (error) {
+    throw new Error(
+      `Error status: ${(error as AxiosError).code}. Error message: ${
+        (error as AxiosError).message
+      }`,
+    );
   }
 }

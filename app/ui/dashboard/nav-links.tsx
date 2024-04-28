@@ -1,9 +1,9 @@
 'use client';
 
 import {
-  UserGroupIcon,
-  HomeIcon,
   DocumentDuplicateIcon,
+  HomeIcon,
+  UserGroupIcon,
   VideoCameraIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -20,7 +20,16 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
-  { name: 'Launch Zoom', href: '/dashboard/zoom', icon: VideoCameraIcon },
+  {
+    name: 'Create Zoom Meeting',
+    href: '/dashboard/create-meeting',
+    icon: VideoCameraIcon,
+  },
+  {
+    name: 'Join Zoom Meeting',
+    href: '/dashboard/join-meeting',
+    icon: VideoCameraIcon,
+  },
 ];
 
 export default function NavLinks() {
