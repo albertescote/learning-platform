@@ -3,8 +3,11 @@ const checkStrVar = (variable: string | undefined, name: string): string => {
   return variable;
 };
 
-const AUTH_URL = checkStrVar(process.env.AUTH_URL, 'AUTH_URL');
+const ZOOM_LEAVE_URL = checkStrVar(
+  process.env.ZOOM_LEAVE_URL,
+  'ZOOM_LEAVE_URL',
+);
+const ZOOM_SDK_KEY = checkStrVar(process.env.ZOOM_SDK_KEY, 'ZOOM_SDK_KEY');
+const BACKEND_URL = checkStrVar(process.env.BACKEND_URL, 'BACKEND_URL');
 
-const AUTH_SECRET = checkStrVar(process.env.AUTH_SECRET, 'AUTH_SECRET');
-
-export { AUTH_URL, AUTH_SECRET };
+export { ZOOM_LEAVE_URL, ZOOM_SDK_KEY, BACKEND_URL };

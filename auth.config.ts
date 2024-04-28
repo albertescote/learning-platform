@@ -10,17 +10,12 @@ export const authConfig = {
   ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      console.log(nextUrl.pathname);
       const isLoggedIn = !!auth?.user;
-      const isOnApp =
-        nextUrl.pathname.startsWith('/dashboard') ||
-        nextUrl.pathname.startsWith('/meeting');
-      if (isOnApp) {
-        return isLoggedIn;
-      } else if (isLoggedIn) {
+      const isOnLogin = nextUrl.pathname.startsWith('/login');
+      if (isOnLogin && isLoggedIn) {
         return Response.redirect(new URL('/dashboard', nextUrl));
       }
-      return true;
+      return isLoggedIn;
     },
   },
 } satisfies NextAuthConfig;
