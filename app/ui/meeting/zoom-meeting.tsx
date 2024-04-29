@@ -1,64 +1,50 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { ZoomMtg } from '@zoom/meetingsdk';
-import { getZoomAuthToken } from '@/app/lib/actions';
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { signVideoToken } from '@/app/lib/backend/signature';
+import uitoolkit from '@zoom/videosdk-ui-toolkit';
+import '@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css';
 
-export default function ZoomMeeting({
-  leaveUrl,
-  sdkKey,
-  role,
-  meetingNumber,
-}: {
-  leaveUrl: string;
-  sdkKey: string;
-  role: number;
-  meetingNumber: number;
-}) {
-  const [accessToken, setAccessToken] = useState('');
+export default function ZoomMeeting() {
+  const searchParams = useSearchParams();
+  const role = searchParams.get('role') as string;
+  const topic = searchParams.get('topic') as string;
 
   useEffect(() => {
-    ZoomMtg.preLoadWasm();
-    ZoomMtg.prepareWebSDK();
-
     const getAccessToken = async () => {
-      return getZoomAuthToken(role, meetingNumber);
+      return signVideoToken(parseInt(role), topic);
     };
 
-    getAccessToken().then((accessToken) => setAccessToken(accessToken));
+    getAccessToken().then((accessToken) => {
+      videoInit(accessToken);
+    });
   }, []);
 
-  useEffect(() => {
-    // @ts-ignore
-    document.getElementById('zmmtg-root').style.display = 'block';
+  const sessionClosed = () => {
+    console.log('session closed');
+    const sessionContainer = document.getElementById(
+      'sessionContainer',
+    ) as HTMLElement;
+    uitoolkit.closeSession(sessionContainer);
+    window.close();
+  };
 
-    ZoomMtg.init({
-      leaveUrl: leaveUrl,
-      patchJsMedia: true,
-      success: (success: any) => {
-        console.log(success);
+  function videoInit(accessToken: string) {
+    console.log('initiating session');
+    const config = {
+      videoSDKJWT: accessToken,
+      sessionName: topic,
+      userName: 'React',
+      sessionPasscode: '123',
+      features: ['video', 'audio', 'settings', 'users', 'chat', 'share'],
+    };
+    const sessionContainer = document.getElementById(
+      'sessionContainer',
+    ) as HTMLElement;
+    console.log({ accessToken });
+    uitoolkit.joinSession(sessionContainer, config);
 
-        ZoomMtg.join({
-          signature: accessToken,
-          sdkKey: sdkKey,
-          meetingNumber: meetingNumber,
-          passWord: '',
-          userName: 'TestName',
-          userEmail: '',
-          tk: '',
-          zak: '',
-          success: (success: any) => {
-            console.log(success);
-          },
-          error: (error: any) => {
-            console.log(error);
-          },
-        });
-      },
-      error: (error: any) => {
-        console.log(error);
-      },
-    });
-  }, [accessToken]);
-
-  return <div></div>;
+    uitoolkit.onSessionClosed(sessionClosed);
+  }
+  return <div id="sessionContainer"></div>;
 }

@@ -1,5 +1,5 @@
 'use client';
-import { createNewMeeting } from '@/app/lib/actions';
+import { createNewMeeting } from '@/app/lib/backend/meeting';
 
 export default function MeetingButton({
   text,
@@ -11,7 +11,7 @@ export default function MeetingButton({
   async function createMeeting() {
     const meetingNumber = await createNewMeeting();
     window.open(
-      `/meeting?role=${role}&${meetingNumber}`,
+      `/meeting?role=${role}&topic=${meetingNumber}`,
       '_blank',
       'noopener,noreferrer',
     );

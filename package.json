@@ -15,6 +15,8 @@
     "@types/node": "20.5.7",
     "@vercel/postgres": "^0.5.0",
     "@zoom/meetingsdk": "^3.6.0",
+    "@zoom/videosdk": "^1.11.0",
+    "@zoom/videosdk-ui-toolkit": "^1.10.8-1",
     "autoprefixer": "10.4.15",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
