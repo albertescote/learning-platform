@@ -6,9 +6,13 @@ import { getZoomAuthToken } from '@/app/lib/actions';
 export default function ZoomMeeting({
   leaveUrl,
   sdkKey,
+  role,
+  meetingNumber,
 }: {
   leaveUrl: string;
   sdkKey: string;
+  role: number;
+  meetingNumber: number;
 }) {
   const [accessToken, setAccessToken] = useState('');
 
@@ -17,7 +21,7 @@ export default function ZoomMeeting({
     ZoomMtg.prepareWebSDK();
 
     const getAccessToken = async () => {
-      return getZoomAuthToken(1, 123456);
+      return getZoomAuthToken(role, meetingNumber);
     };
 
     getAccessToken().then((accessToken) => setAccessToken(accessToken));
@@ -36,7 +40,7 @@ export default function ZoomMeeting({
         ZoomMtg.join({
           signature: accessToken,
           sdkKey: sdkKey,
-          meetingNumber: 1233456,
+          meetingNumber: meetingNumber,
           passWord: '',
           userName: 'TestName',
           userEmail: '',

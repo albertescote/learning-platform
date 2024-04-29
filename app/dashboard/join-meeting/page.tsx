@@ -9,7 +9,7 @@ export default async function Page() {
   return (
     <main>
       <h1>Hola! Bienvendio a Join Zoom Page</h1>
-      <MeetingButton text={'Join meeting'}></MeetingButton>
+      <MeetingButton text={'Join meeting'} role={0}></MeetingButton>
     </main>
   );
 }
