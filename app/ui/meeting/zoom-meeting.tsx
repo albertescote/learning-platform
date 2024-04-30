@@ -22,6 +22,7 @@ export default function ZoomMeeting() {
   function sessionClosed(uitoolkit: any, sessionContainer: HTMLElement) {
     console.log('session closed');
     uitoolkit.closeSession(sessionContainer);
+    window.close();
   }
 
   async function videoInit(accessToken: string) {
