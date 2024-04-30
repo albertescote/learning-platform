@@ -1,9 +1,8 @@
 'use client';
-import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { signVideoToken } from '@/app/lib/backend/signature';
-import uitoolkit from '@zoom/videosdk-ui-toolkit';
 import '@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { signVideoToken } from '@/app/lib/backend/signature';
 
 export default function ZoomMeeting() {
   const searchParams = useSearchParams();
@@ -20,17 +19,14 @@ export default function ZoomMeeting() {
     });
   }, []);
 
-  const sessionClosed = () => {
+  function sessionClosed(uitoolkit: any, sessionContainer: HTMLElement) {
     console.log('session closed');
-    const sessionContainer = document.getElementById(
-      'sessionContainer',
-    ) as HTMLElement;
     uitoolkit.closeSession(sessionContainer);
-    window.close();
-  };
+  }
 
-  function videoInit(accessToken: string) {
+  async function videoInit(accessToken: string) {
     console.log('initiating session');
+    const uitoolkit = (await import('@zoom/videosdk-ui-toolkit')).default;
     const config = {
       videoSDKJWT: accessToken,
       sessionName: topic,
@@ -44,7 +40,7 @@ export default function ZoomMeeting() {
     console.log({ accessToken });
     uitoolkit.joinSession(sessionContainer, config);
 
-    uitoolkit.onSessionClosed(sessionClosed);
+    uitoolkit.onSessionClosed(() => sessionClosed(uitoolkit, sessionContainer));
   }
   return <div id="sessionContainer"></div>;
 }

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Join Zoom Meeting',
 };
 
-export default async function Page() {
+export default function Page() {
   return (
     <main>
       <h1>Hola! Bienvendio a Join Zoom Page</h1>

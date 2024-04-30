@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Meeting',
 };
 
-export default async function Page() {
+export default function Page() {
   return (
     <main>
       <div>
