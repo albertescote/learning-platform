@@ -1,17 +1,13 @@
 'use client';
 import { createNewMeeting } from '@/app/lib/backend/meeting';
+import { getCookie } from 'cookies-next';
 
-export default function MeetingButton({
-  text,
-  role,
-}: {
-  text: string;
-  role: number;
-}) {
+export default function MeetingButton({ text }: { text: string }) {
   async function createMeeting() {
-    const meetingNumber = await createNewMeeting();
+    const accessToken = getCookie('access_token_learning_platform');
+    const newMeeting = await createNewMeeting(accessToken!);
     window.open(
-      `/meeting?role=${role}&topic=${meetingNumber}`,
+      `/meeting?topic=${newMeeting.topic}&session=${newMeeting.signature}`,
       '_blank',
       'noopener,noreferrer',
     );

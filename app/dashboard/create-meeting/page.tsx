@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <main>
       <h1>Hola! Bienvendio a Create Zoom Page</h1>
-      <MeetingButton text={'Create meeting'} role={1}></MeetingButton>
+      <MeetingButton text={'Create meeting'}></MeetingButton>
     </main>
   );
 }

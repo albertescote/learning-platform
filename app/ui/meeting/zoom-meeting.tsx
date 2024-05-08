@@ -2,22 +2,15 @@
 import '@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { signVideoToken } from '@/app/lib/backend/signature';
 
 export default function ZoomMeeting() {
   const searchParams = useSearchParams();
-  const role = searchParams.get('role') as string;
   const topic = searchParams.get('topic') as string;
+  const sessionJwt = searchParams.get('session') as string;
 
   useEffect(() => {
-    const getAccessToken = async () => {
-      return signVideoToken(parseInt(role), topic);
-    };
-
-    getAccessToken().then((accessToken) => {
-      videoInit(accessToken);
-    });
-  }, []);
+    videoInit(sessionJwt).then();
+  }, [sessionJwt]);
 
   function sessionClosed(uitoolkit: any, sessionContainer: HTMLElement) {
     console.log('session closed');
@@ -25,11 +18,11 @@ export default function ZoomMeeting() {
     window.close();
   }
 
-  async function videoInit(accessToken: string) {
+  async function videoInit(sessionJwt: string) {
     console.log('initiating session');
     const uitoolkit = (await import('@zoom/videosdk-ui-toolkit')).default;
     const config = {
-      videoSDKJWT: accessToken,
+      videoSDKJWT: sessionJwt,
       sessionName: topic,
       userName: 'React',
       sessionPasscode: '123',
@@ -38,7 +31,6 @@ export default function ZoomMeeting() {
     const sessionContainer = document.getElementById(
       'sessionContainer',
     ) as HTMLElement;
-    console.log({ accessToken });
     uitoolkit.joinSession(sessionContainer, config);
 
     uitoolkit.onSessionClosed(() => sessionClosed(uitoolkit, sessionContainer));

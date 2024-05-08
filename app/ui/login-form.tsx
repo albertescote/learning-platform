@@ -1,18 +1,36 @@
 'use client';
 
-import { authenticate } from '@/app/lib/actions';
 import { lusitana } from '@/app/ui/fonts';
 import {
   AtSymbolIcon,
-  KeyIcon,
   ExclamationCircleIcon,
+  KeyIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
 import { useFormState, useFormStatus } from 'react-dom';
+import { authenticate } from '@/app/lib/backend/auth';
+import { useEffect, useState } from 'react';
+import { setCookie } from 'cookies-next';
 
 export default function LoginForm() {
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  const [authenticationResult, dispatch] = useFormState(authenticate, {
+    valid: false,
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    if (!authenticationResult.valid && authenticationResult.errorMessage) {
+      setErrorMessage(authenticationResult.errorMessage);
+    }
+    if (authenticationResult.valid) {
+      setCookie(
+        'access_token_learning_platform',
+        authenticationResult.accessToken,
+      );
+      window.location.href = '/dashboard';
+    }
+  }, [authenticationResult]);
 
   return (
     <form action={dispatch} className="space-y-3">
