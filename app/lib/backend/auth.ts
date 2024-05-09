@@ -9,6 +9,12 @@ export interface AuthenticationResult {
   errorMessage?: string;
 }
 
+export interface AccessTokenPayload {
+  email: string;
+  sub: string;
+  role: string;
+}
+
 export async function authenticate(
   prevState: AuthenticationResult,
   formData: FormData,
@@ -38,19 +44,19 @@ export async function authenticate(
 
 export async function validateAccessToken(
   accessToken: string,
-): Promise<boolean> {
+): Promise<AccessTokenPayload | null> {
   try {
     const jsonString = Buffer.from(BACKEND_PUBLIC_KEY, 'base64').toString(
       'utf-8',
     );
     const jwk: JWK = JSON.parse(jsonString);
     const keyLike = await importJWK(jwk, jwk.alg ?? 'ES256');
-    await jwtVerify(accessToken, keyLike, {
+    const verifyResult = await jwtVerify(accessToken, keyLike, {
       algorithms: [jwk.alg ?? 'ES256'],
     });
-    return true;
+    return verifyResult.payload as unknown as AccessTokenPayload;
   } catch (error) {
     console.log('Access token validation failed: ' + (error as Error).message);
-    return false;
+    return null;
   }
 }
