@@ -2,10 +2,13 @@
 import { HomeIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { getUserInfo, GetUserResponse } from '@/app/lib/backend/user';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { getCookie } from 'cookies-next';
+import {
+  AccessTokenPayload,
+  validateAccessToken,
+} from '@/app/lib/backend/auth';
 
 export default function NavLinks() {
   const pathName = usePathname();
@@ -15,26 +18,33 @@ export default function NavLinks() {
 
   useEffect(() => {
     const accessToken = getCookie('access_token_learning_platform')!;
-    getUserInfo(accessToken!).then((getUserResponse: GetUserResponse) => {
-      const newLinks = [...links];
-      if (getUserResponse.role === 'Teacher') {
-        console.log('Teacher');
-        newLinks.push({
-          name: 'Create Zoom Meeting',
-          href: '/dashboard/create-meeting',
-          icon: VideoCameraIcon,
-        });
-      }
-      if (getUserResponse.role === 'Student') {
-        console.log('Student');
-        newLinks.push({
-          name: 'Join Zoom Meeting',
-          href: '/dashboard/join-meeting',
-          icon: VideoCameraIcon,
-        });
-      }
-      setLinks(newLinks);
-    });
+    validateAccessToken(accessToken!).then(
+      (accessTokenPayload: AccessTokenPayload | null) => {
+        const newLinks = [...links];
+        if (accessTokenPayload?.role === 'Teacher') {
+          newLinks.push(
+            {
+              name: 'Create Zoom Meeting',
+              href: '/dashboard/create-meeting',
+              icon: VideoCameraIcon,
+            },
+            {
+              name: 'Join Zoom Meeting',
+              href: '/dashboard/join-meeting',
+              icon: VideoCameraIcon,
+            },
+          );
+        }
+        if (accessTokenPayload?.role === 'Student') {
+          newLinks.push({
+            name: 'Join Zoom Meeting',
+            href: '/dashboard/join-meeting',
+            icon: VideoCameraIcon,
+          });
+        }
+        setLinks(newLinks);
+      },
+    );
   }, []);
 
   return (

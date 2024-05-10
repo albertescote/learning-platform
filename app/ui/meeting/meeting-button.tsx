@@ -12,11 +12,14 @@ export default function MeetingButton({ text }: { text: string }) {
       'noopener,noreferrer',
     );
   }
+  async function joinMeeting() {
+    console.log('Join meeting')!;
+  }
   return (
     <div>
       <button
         className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        onClick={createMeeting}
+        onClick={text === 'Create meeting' ? createMeeting : joinMeeting}
       >
         {text}
       </button>

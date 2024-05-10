@@ -2,6 +2,7 @@
 import { BACKEND_PUBLIC_KEY, BACKEND_URL } from '@/app/config';
 import axios, { AxiosError } from 'axios';
 import { importJWK, JWK, jwtVerify } from 'jose';
+import { cookies } from 'next/headers';
 
 export interface AuthenticationResult {
   valid: boolean;
@@ -46,6 +47,9 @@ export async function validateAccessToken(
   accessToken: string,
 ): Promise<AccessTokenPayload | null> {
   try {
+    const cookieStore = cookies();
+    const token = cookieStore.get('access_token_learning_platform');
+    console.log({ token });
     const jsonString = Buffer.from(BACKEND_PUBLIC_KEY, 'base64').toString(
       'utf-8',
     );
