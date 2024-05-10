@@ -1,26 +1,23 @@
 import { Metadata } from 'next';
-import MeetingButton from '@/app/ui/meeting/meeting-button';
 import { getAllMeetings } from '@/app/lib/backend/meeting';
-import { cookies } from 'next/headers';
+import JoinMeetingButton from '@/app/ui/dashboard/join-meeting-button';
 
 export const metadata: Metadata = {
   title: 'Join Zoom Meeting',
 };
 
 export default async function Page() {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get('access_token_learning_platform');
-  const meetings = await getAllMeetings(accessToken!.value);
+  const meetings = await getAllMeetings();
   return (
     <main>
       <h1>Hola! Bienvendio a Join Zoom Page</h1>
       <>
         {meetings.map((meeting) => {
           return (
-            <MeetingButton
+            <JoinMeetingButton
               key={meeting.id}
-              text={`Join meeting ${meeting.id}`}
-            ></MeetingButton>
+              topic={meeting.topic}
+            ></JoinMeetingButton>
           );
         })}
       </>

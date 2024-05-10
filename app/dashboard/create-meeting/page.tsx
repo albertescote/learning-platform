@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import MeetingButton from '@/app/ui/meeting/meeting-button';
+import CreateMeetingButton from '@/app/ui/dashboard/create-meeting-button';
 
 export const metadata: Metadata = {
   title: 'Create Zoom Meeting',
@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <main>
       <h1>Hola! Bienvendio a Create Zoom Page</h1>
-      <MeetingButton text={'Create meeting'}></MeetingButton>
+      <CreateMeetingButton></CreateMeetingButton>
     </main>
   );
 }

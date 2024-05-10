@@ -2,7 +2,7 @@
 import { BACKEND_PUBLIC_KEY, BACKEND_URL } from '@/app/config';
 import axios, { AxiosError } from 'axios';
 import { importJWK, JWK, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { getAccessTokenCookie } from '@/app/lib/utils';
 
 export interface AuthenticationResult {
   valid: boolean;
@@ -43,13 +43,15 @@ export async function authenticate(
   }
 }
 
-export async function validateAccessToken(
-  accessToken: string,
-): Promise<AccessTokenPayload | null> {
+export async function validateAccessToken(): Promise<AccessTokenPayload | null> {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get('access_token_learning_platform');
-    console.log({ token });
+    const accessToken = getAccessTokenCookie();
+    if (!accessToken) {
+      console.log(
+        'Access token validation failed: access token cookie not found',
+      );
+      return null;
+    }
     const jsonString = Buffer.from(BACKEND_PUBLIC_KEY, 'base64').toString(
       'utf-8',
     );

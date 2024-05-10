@@ -2,6 +2,7 @@
 import '@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { validateAccessToken } from '@/app/lib/backend/auth';
 
 export default function ZoomMeeting() {
   const searchParams = useSearchParams();
@@ -9,7 +10,9 @@ export default function ZoomMeeting() {
   const sessionJwt = searchParams.get('session') as string;
 
   useEffect(() => {
-    videoInit(sessionJwt).then();
+    validateAccessToken().then((accessTokenPayload) => {
+      videoInit(accessTokenPayload!.email, sessionJwt).then();
+    });
   }, [sessionJwt]);
 
   function sessionClosed(uitoolkit: any, sessionContainer: HTMLElement) {
@@ -18,13 +21,13 @@ export default function ZoomMeeting() {
     window.close();
   }
 
-  async function videoInit(sessionJwt: string) {
+  async function videoInit(username: string, sessionJwt: string) {
     console.log('initiating session');
     const uitoolkit = (await import('@zoom/videosdk-ui-toolkit')).default;
     const config = {
       videoSDKJWT: sessionJwt,
       sessionName: topic,
-      userName: 'React',
+      userName: username,
       sessionPasscode: '123',
       features: ['video', 'audio', 'settings', 'users', 'chat', 'share'],
     };

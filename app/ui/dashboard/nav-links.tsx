@@ -4,7 +4,6 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { getCookie } from 'cookies-next';
 import {
   AccessTokenPayload,
   validateAccessToken,
@@ -17,8 +16,7 @@ export default function NavLinks() {
   ]);
 
   useEffect(() => {
-    const accessToken = getCookie('access_token_learning_platform')!;
-    validateAccessToken(accessToken!).then(
+    validateAccessToken().then(
       (accessTokenPayload: AccessTokenPayload | null) => {
         const newLinks = [...links];
         if (accessTokenPayload?.role === 'Teacher') {

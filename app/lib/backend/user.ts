@@ -3,6 +3,7 @@
 import axios, { AxiosError } from 'axios';
 import { BACKEND_URL } from '@/app/config';
 import { decodeJwt } from 'jose';
+import { getAccessTokenCookie } from '@/app/lib/utils';
 
 export interface GetUserResponse {
   id: string;
@@ -12,9 +13,13 @@ export interface GetUserResponse {
   role: string;
 }
 
-export async function getUserInfo(
-  accessToken: string,
-): Promise<GetUserResponse> {
+export async function getUserInfo(): Promise<GetUserResponse> {
+  const accessToken = getAccessTokenCookie();
+  if (!accessToken) {
+    throw new Error(
+      'Access token validation failed: access token cookie not found',
+    );
+  }
   try {
     const jwtPayload = decodeJwt(accessToken);
     const response = await axios.get(BACKEND_URL + '/user/' + jwtPayload.sub, {
@@ -30,8 +35,9 @@ export async function getUserInfo(
   }
 }
 
-export async function getFirstStudentId(accessToken: string): Promise<string> {
+export async function getFirstStudentId(): Promise<string> {
   try {
+    const accessToken = getAccessTokenCookie();
     const response = await axios.get(BACKEND_URL + '/user', {
       headers: { Authorization: 'Bearer ' + accessToken },
     });
